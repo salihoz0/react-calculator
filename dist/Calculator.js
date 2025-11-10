@@ -605,7 +605,7 @@ function Calculator(_ref) {
       }, titleBarOverrides.iconButton)
     }, /*#__PURE__*/_react["default"].createElement(_Close["default"], {
       fontSize: "small"
-    })))), /*#__PURE__*/_react["default"].createElement(_Box["default"], {
+    })))), !showHistory && /*#__PURE__*/_react["default"].createElement(_Box["default"], {
       sx: {
         px: 2,
         pt: 2,
@@ -646,30 +646,18 @@ function Calculator(_ref) {
       onChange: function onChange(e) {
         setDisplay(e.target.value);
       }
-    })), /*#__PURE__*/_react["default"].createElement(_Box["default"], {
+    })), showHistory ? /*#__PURE__*/_react["default"].createElement(_Box["default"], {
       sx: {
-        flex: 1,
-        px: 2,
-        pb: 2,
-        display: 'flex',
-        flexDirection: 'column',
-        bgcolor: '#f8fafc'
-      }
-    }, showHistory ? /*#__PURE__*/_react["default"].createElement(_Box["default"], {
-      sx: {
-        flex: 1,
         bgcolor: 'white',
-        borderRadius: '8px',
-        overflow: 'hidden',
+        overflowY: 'auto',
+        overflowX: 'hidden',
         display: 'flex',
-        flexDirection: 'column',
-        border: '1px solid #e2e8f0'
+        flexDirection: 'column'
       }
     }, /*#__PURE__*/_react["default"].createElement(_Box["default"], {
       sx: _objectSpread({
         p: 1.5,
-        bgcolor: '#f8fafc',
-        borderBottom: '1px solid #e2e8f0'
+        bgcolor: '#f8fafc'
       }, historyOverrides.container)
     }, /*#__PURE__*/_react["default"].createElement(_Typography["default"], {
       variant: "subtitle2",
@@ -680,7 +668,8 @@ function Calculator(_ref) {
     }, historyTitle)), /*#__PURE__*/_react["default"].createElement(_List["default"], {
       sx: {
         flex: 1,
-        overflow: 'auto',
+        overflowY: 'auto',
+        overflowX: 'hidden',
         p: 0
       }
     }, history.length === 0 ? /*#__PURE__*/_react["default"].createElement(_ListItem["default"], null, /*#__PURE__*/_react["default"].createElement(_ListItemText["default"], {
@@ -759,7 +748,7 @@ function Calculator(_ref) {
           filter: 'brightness(0.92)'
         } : {})
       }, b);
-    })))));
+    }))));
   }
   if (mode === 'embedded') {
     return /*#__PURE__*/_react["default"].createElement(_Box["default"], null, renderCalculatorContent());

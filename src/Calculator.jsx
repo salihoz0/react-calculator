@@ -558,70 +558,60 @@ export default function Calculator({
                         )}
                     </Box>
 
-                    {/* Display */}
-                    <Box sx={{ px: 2, pt: 2, pb: 1.5, bgcolor: '#f8fafc' }}>
-                        <TextField
-                            value={display}
-                            size="small"
-                            fullWidth
-                            autoComplete="off"
-                            inputProps={{
-                                'aria-label': 'calculator display',
-                                style: {
-                                    textAlign: 'right',
-                                    fontSize: '32px',
-                                    fontWeight: 600,
-                                    color: '#0f172a',
-                                    padding: '12px',
-                                },
-                            }}
-                            sx={{
-                                bgcolor: '#ffffff',
-                                borderRadius: '8px',
-                                '& .MuiOutlinedInput-root': {
-                                    '& fieldset': { borderColor: '#e2e8f0' },
-                                    '&:hover fieldset': { borderColor: '#cbd5e1' },
-                                    '&.Mui-focused fieldset': {
-                                        borderColor: '#3b82f6',
-                                        borderWidth: '2px',
+                    {/* Display - hide when viewing history to avoid duplicate input inside history area */}
+                    {!showHistory && (
+                        <Box sx={{ px: 2, pt: 2, pb: 1.5, bgcolor: '#f8fafc' }}>
+                            <TextField
+                                value={display}
+                                size="small"
+                                fullWidth
+                                autoComplete="off"
+                                inputProps={{
+                                    'aria-label': 'calculator display',
+                                    style: {
+                                        textAlign: 'right',
+                                        fontSize: '32px',
+                                        fontWeight: 600,
+                                        color: '#0f172a',
+                                        padding: '12px',
                                     },
-                                },
-                                ...displayOverrides,
-                            }}
-                            onChange={(e) => {
-                                setDisplay(e.target.value);
-                            }}
-                        />
-                    </Box>
+                                }}
+                                sx={{
+                                    bgcolor: '#ffffff',
+                                    borderRadius: '8px',
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': { borderColor: '#e2e8f0' },
+                                        '&:hover fieldset': { borderColor: '#cbd5e1' },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: '#3b82f6',
+                                            borderWidth: '2px',
+                                        },
+                                    },
+                                    ...displayOverrides,
+                                }}
+                                onChange={(e) => {
+                                    setDisplay(e.target.value);
+                                }}
+                            />
+                        </Box>
+                    )}
 
                     {/* Main Content Area */}
-                    <Box
-                        sx={{
-                            flex: 1,
-                            px: 2,
-                            pb: 2,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            bgcolor: '#f8fafc',
-                        }}
-                    >
+                
                         {showHistory ? (
                             <Box
                                 sx={{
-                                    flex: 1,
                                     bgcolor: 'white',
-                                    borderRadius: '8px',
-                                    overflow: 'hidden',
+                                    overflowY: 'auto',
+                                    overflowX: 'hidden',
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    border: '1px solid #e2e8f0',
                                 }}
                             >
                                 <Box
                                     sx={{
                                         p: 1.5,
                                         bgcolor: '#f8fafc',
-                                        borderBottom: '1px solid #e2e8f0',
                                         ...historyOverrides.container,
                                     }}
                                 >
@@ -636,7 +626,7 @@ export default function Calculator({
                                         {historyTitle}
                                     </Typography>
                                 </Box>
-                                <List sx={{ flex: 1, overflow: 'auto', p: 0 }}>
+                                <List sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', p: 0 }}>
                                     {history.length === 0 ? (
                                         <ListItem>
                                             <ListItemText
@@ -734,7 +724,6 @@ export default function Calculator({
                                 ))}
                             </Box>
                         )}
-                    </Box>
                 </Stack>
             </Paper>
         );
