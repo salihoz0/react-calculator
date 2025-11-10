@@ -1,0 +1,38 @@
+{
+  "name": "floating-react-calculator",
+  "version": "0.1.0",
+  "description": "A customizable React calculator component (MUI-based) designed to be published as an npm package.",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "echo \"No build configured. Add a bundler (rollup/webpack/tsup) if you want to produce a compiled output.\""
+  },
+  "keywords": [
+    "react",
+    "calculator",
+    "mui",
+    "component",
+    "floatable",
+    "npm-package",
+    "embeddable"
+  ],
+  "author": "salihoz0",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {},
+  "peerDependencies": {
+    "@mui/material": "^5.0.0",
+    "react": "^18 || ^17",
+    "react-dom": "^18 || ^17"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.0.0",
+    "@emotion/styled": "^11.0.0",
+    "@mui/icons-material": "^5.18.0",
+    "@mui/material": "^5.0.0",
+    "react": "^18 || ^17",
+    "react-dom": "^18 || ^17"
+  }
+}
