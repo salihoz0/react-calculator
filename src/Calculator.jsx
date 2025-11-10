@@ -168,6 +168,22 @@ function clearMinimizedState() {
     }
 }
 
+/**
+ * Calculator component with various modes.
+ *
+ * @param {("embedded"|"floating"|"modal")} mode - Either 'embedded', 'floating', or 'modal'.
+ * @param {string} title - The title of the calculator.
+ * @param {string} historyTitle - The title of the history list.
+ * @param {boolean} initiallyOpen - Whether to open the calculator on mount.
+ * @param {string} initialValue - The initial display value of the calculator.
+ * @param {function} onChange - Called when the display value changes.
+ * @param {function} onOpen - Called when the calculator is opened.
+ * @param {function} onClose - Called when the calculator is closed.
+ * @param {function} setOpen - Called when the calculator's open state is toggled.
+ * @param {number} width - The width of the calculator.
+ * @param {number} height - The height of the calculator.
+ * @param {object} styleOverrides - Optional style overrides for the calculator.
+ */
 export default function Calculator({
     mode = 'embedded',
     title = 'Calculator',
@@ -196,10 +212,12 @@ export default function Calculator({
     const [pos, setPos] = useState(getStoredPosition);
 
     // resolve styleOverrides once per render so modal and inner render can share it
-    const _nested = typeof styleOverrides === 'object' && (
-        styleOverrides.paper || styleOverrides.button || styleOverrides.display
-    );
-    const _resolved = _nested ? { ...DEFAULT_STYLE_OVERRIDES, ...styleOverrides } : { ...DEFAULT_STYLE_OVERRIDES, paper: styleOverrides };
+    const _nested =
+        typeof styleOverrides === 'object' &&
+        (styleOverrides.paper || styleOverrides.button || styleOverrides.display);
+    const _resolved = _nested
+        ? { ...DEFAULT_STYLE_OVERRIDES, ...styleOverrides }
+        : { ...DEFAULT_STYLE_OVERRIDES, paper: styleOverrides };
     const paperOverrides = _resolved.paper || {};
     const titleBarOverrides = _resolved.titleBar || {};
     const buttonOverrides = _resolved.button || {};
@@ -246,13 +264,47 @@ export default function Calculator({
         setDisplay('');
     }, []);
 
-    // Keyboard handlers: update display and activeKey for visual feedback
+    const handleBackspace = useCallback(() => {
+        setDisplay((d) => {
+            const next = d.length <= 1 ? '' : d.slice(0, -1);
+            return next;
+        });
+    }, []);
+
+    const handleEquals = useCallback(() => {
+        setDisplay((d) => {
+            if (!d || d === 'Error') return d;
+            const sanitized = sanitizeExpression(d);
+            if (!sanitized) return d;
+            const exprForEval = toEvalExpression(sanitized);
+            const result = safeEvaluate(exprForEval);
+            if (result !== 'Error') {
+                const newEntry = { expression: sanitized, result, timestamp: Date.now() };
+                setHistory((h) => {
+                    const newHistory = [...h, newEntry];
+                    saveHistory(newHistory);
+                    return newHistory;
+                });
+            }
+            return result;
+        });
+    }, []);
+
     useEffect(() => {
         let keyClearTimer = null;
         function onKeyDown(e) {
             if (!open || showHistory) return;
             const rawKey = e.key;
-            const key = rawKey === '*' ? '×' : rawKey === '/' ? '÷' : rawKey === 'Enter' ? '=' : rawKey === 'Backspace' ? '⌫' : rawKey;
+            const key =
+                rawKey === '*'
+                    ? '×'
+                    : rawKey === '/'
+                    ? '÷'
+                    : rawKey === 'Enter'
+                    ? '='
+                    : rawKey === 'Backspace'
+                    ? '⌫'
+                    : rawKey;
 
             setActiveKey(key);
             if (keyClearTimer) clearTimeout(keyClearTimer);
@@ -290,7 +342,7 @@ export default function Calculator({
                 setActiveKey(e.key.toLowerCase() === 'c' ? 'C' : 'C');
                 if (keyClearTimer) clearTimeout(keyClearTimer);
                 keyClearTimer = setTimeout(() => setActiveKey(null), 140);
-                handleClear();25
+                handleClear();
                 e.preventDefault();
             } else {
                 // Prevent default for any other keys to avoid typing invalid characters
@@ -391,32 +443,32 @@ export default function Calculator({
 
     function getButtonColor(btn) {
         if (btn === '=')
-            return { 
-                bgcolor: '#10b981', 
-                '&:hover': { bgcolor: '#059669' }, 
+            return {
+                bgcolor: '#10b981',
+                '&:hover': { bgcolor: '#059669' },
                 color: 'white',
-                fontWeight: 600 
+                fontWeight: 600,
             };
         if (btn === 'C')
-            return { 
-                bgcolor: '#ef4444', 
-                '&:hover': { bgcolor: '#dc2626' }, 
+            return {
+                bgcolor: '#ef4444',
+                '&:hover': { bgcolor: '#dc2626' },
                 color: 'white',
-                fontWeight: 600 
+                fontWeight: 600,
             };
         if (['÷', '×', '-', '+', '⌫'].includes(btn))
-            return { 
-                bgcolor: '#3b82f6', 
-                '&:hover': { bgcolor: '#2563eb' }, 
+            return {
+                bgcolor: '#3b82f6',
+                '&:hover': { bgcolor: '#2563eb' },
                 color: 'white',
-                fontWeight: 600 
+                fontWeight: 600,
             };
-        return { 
-            bgcolor: '#f8fafc', 
-            '&:hover': { bgcolor: '#e2e8f0' }, 
+        return {
+            bgcolor: '#f8fafc',
+            '&:hover': { bgcolor: '#e2e8f0' },
             color: '#1e293b',
             border: '1px solid #e2e8f0',
-            fontWeight: 500
+            fontWeight: 500,
         };
     }
 
@@ -456,7 +508,10 @@ export default function Calculator({
                             {mode === 'floating' && (
                                 <DragHandleIcon sx={{ color: '#64748b', fontSize: '20px' }} />
                             )}
-                            <Typography variant="h6" sx={{ color: '#1e293b', fontWeight: 600, fontSize: '16px' }}>
+                            <Typography
+                                variant="h6"
+                                sx={{ color: '#1e293b', fontWeight: 600, fontSize: '16px' }}
+                            >
                                 {title}
                             </Typography>
                         </Box>
@@ -526,7 +581,10 @@ export default function Calculator({
                                 '& .MuiOutlinedInput-root': {
                                     '& fieldset': { borderColor: '#e2e8f0' },
                                     '&:hover fieldset': { borderColor: '#cbd5e1' },
-                                    '&.Mui-focused fieldset': { borderColor: '#3b82f6', borderWidth: '2px' },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: '#3b82f6',
+                                        borderWidth: '2px',
+                                    },
                                 },
                                 ...displayOverrides,
                             }}
@@ -537,7 +595,16 @@ export default function Calculator({
                     </Box>
 
                     {/* Main Content Area */}
-                    <Box sx={{ flex: 1, px: 2, pb: 2, display: 'flex', flexDirection: 'column', bgcolor: '#f8fafc' }}>
+                    <Box
+                        sx={{
+                            flex: 1,
+                            px: 2,
+                            pb: 2,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            bgcolor: '#f8fafc',
+                        }}
+                    >
                         {showHistory ? (
                             <Box
                                 sx={{
@@ -558,7 +625,14 @@ export default function Calculator({
                                         ...historyOverrides.container,
                                     }}
                                 >
-                                    <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1e293b', ...historyTitleOverrides }}>
+                                    <Typography
+                                        variant="subtitle2"
+                                        sx={{
+                                            fontWeight: 600,
+                                            color: '#1e293b',
+                                            ...historyTitleOverrides,
+                                        }}
+                                    >
                                         {historyTitle}
                                     </Typography>
                                 </Box>
@@ -576,7 +650,7 @@ export default function Calculator({
                                                 <ListItemButton
                                                     onClick={() => handleHistoryClick(entry)}
                                                     sx={{
-                                                        '&:hover': { bgcolor: '#f8fafc' }
+                                                        '&:hover': { bgcolor: '#f8fafc' },
                                                     }}
                                                 >
                                                     <ListItemText
@@ -619,14 +693,18 @@ export default function Calculator({
                                             setTimeout(() => setActiveKey(null), 140);
                                         }}
                                         sx={{
-                                            fontSize: b === '0' ? (buttonOverrides.zeroFontSize || '14px') : (buttonOverrides.fontSize || '16px'),
+                                            fontSize:
+                                                b === '0'
+                                                    ? buttonOverrides.zeroFontSize || '14px'
+                                                    : buttonOverrides.fontSize || '16px',
                                             lineHeight: 1,
                                             py: buttonOverrides.py ?? 0.9,
                                             px: buttonOverrides.px ?? 1,
                                             fontWeight: buttonOverrides.fontWeight ?? 600,
                                             borderRadius: buttonOverrides.borderRadius ?? '6px',
                                             boxShadow: buttonOverrides.boxShadow ?? 'none',
-                                            transition: buttonOverrides.transition ?? 'all 0.12s ease',
+                                            transition:
+                                                buttonOverrides.transition ?? 'all 0.12s ease',
                                             gridColumn: b === '0' ? 'span 2' : 'span 1',
                                             '&:hover': buttonOverrides.hover ?? {
                                                 boxShadow: '0 1px 2px rgba(0,0,0,0.06)',
@@ -637,14 +715,18 @@ export default function Calculator({
                                                 boxShadow: 'none',
                                             },
                                             ...getButtonColor(b),
-                                            ...(buttonOverrides && buttonOverrides.general ? buttonOverrides.general : {}),
+                                            ...(buttonOverrides && buttonOverrides.general
+                                                ? buttonOverrides.general
+                                                : {}),
                                             ...(buttonByKey[b] || {}),
-                                            ...(activeKey === String(b) ? {
-                                                transform: 'translateY(1px)',
-                                                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)',
-                                                opacity: 0.9,
-                                                filter: 'brightness(0.92)',
-                                            } : {}),
+                                            ...(activeKey === String(b)
+                                                ? {
+                                                      transform: 'translateY(1px)',
+                                                      boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)',
+                                                      opacity: 0.9,
+                                                      filter: 'brightness(0.92)',
+                                                  }
+                                                : {}),
                                         }}
                                     >
                                         {b}
