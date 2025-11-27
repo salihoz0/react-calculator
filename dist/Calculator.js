@@ -772,7 +772,7 @@ function Calculator(_ref) {
       position: 'fixed',
       left: pos.x,
       top: pos.y,
-      zIndex: 1300
+      zIndex: paperOverrides.zIndex || 1300
     }
   }, renderCalculatorContent());
 }

@@ -1,9 +1,10 @@
 {
   "name": "floating-react-calculator",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "description": "A customizable React calculator component (MUI-based) designed to be published as an npm package.",
   "repository": "https://github.com/salihoz0/react-calculator.git",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
